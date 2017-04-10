@@ -28,7 +28,8 @@ public class RequestHandler extends Thread {
             Response res = new Response(out);
 
             String path = req.path();
-            log.debug("PATH: {}", req.path());
+            log.debug("METHOD: {}, PATH: {}, QUERYSTRING: {}, BODY: {}",
+                    req.method(), req.path(), req.querystring().toString(), req.body().toString());
 
             switch (req.path()) {
                 case "/": {
@@ -39,11 +40,11 @@ public class RequestHandler extends Thread {
                 case "/user/create": {
                     res.status(201);
                     res.send("Created");
-                    Map<String, String> qs = req.querystring();
+                    Map<String, String> body = req.body();
 
-                    User user = new User(qs.get("userId"), qs.get("password"), qs.get("name"),
-                            URLDecoder.decode(qs.get("email")));
-                    log.debug(user.toString());
+                    User user = new User(body.get("userId"), body.get("password"), body.get("name"),
+                            URLDecoder.decode(body.get("email")));
+                    log.debug("user created: {}", user.toString());
                     break;
                 }
                 default: {
