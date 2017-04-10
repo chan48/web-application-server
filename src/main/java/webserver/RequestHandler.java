@@ -2,8 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.file.Files;
+import java.util.Map;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +28,22 @@ public class RequestHandler extends Thread {
             Response res = new Response(out);
 
             String path = req.path();
-
-
+            log.debug("PATH: {}", req.path());
 
             switch (req.path()) {
                 case "/": {
                     res.status(200);
                     res.send("Hello world");
+                    break;
+                }
+                case "/user/create": {
+                    res.status(201);
+                    res.send("Created");
+                    Map<String, String> qs = req.querystring();
+
+                    User user = new User(qs.get("userId"), qs.get("password"), qs.get("name"),
+                            URLDecoder.decode(qs.get("email")));
+                    log.debug(user.toString());
                     break;
                 }
                 default: {
