@@ -33,22 +33,24 @@ public class RequestHandler extends Thread {
 
             switch (req.path()) {
                 case "/": {
-                    res.status(200);
+                    res.status(200, "OK");
                     res.send("Hello world");
                     break;
                 }
                 case "/user/create": {
-                    res.status(201);
-                    res.send("Created");
                     Map<String, String> body = req.body();
 
                     User user = new User(body.get("userId"), body.get("password"), body.get("name"),
                             URLDecoder.decode(body.get("email")));
+
                     log.debug("user created: {}", user.toString());
+
+                    res.status(302, "Redirect");
+                    res.redirect("/index.html");
                     break;
                 }
                 default: {
-                    res.status(200);
+                    res.status(200, "OK");
                     res.sendFile(path);
                 }
             }

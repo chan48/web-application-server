@@ -20,8 +20,8 @@ public class Response {
         dos = new DataOutputStream(out);
     }
 
-    public void status(int statusCode) throws IOException {
-        writeBytes("HTTP/1.1 " + statusCode + " OK");
+    public void status(int statusCode, String message) throws IOException {
+        writeBytes("HTTP/1.1 " + statusCode + " " + message);
     }
 
     public void send(String text) throws IOException {
@@ -38,6 +38,11 @@ public class Response {
         writeBytes("Content-Length: " + fileBytes.length);
         writeBytes("");
         write(fileBytes);
+        end();
+    }
+
+    public void redirect(String path) throws IOException {
+        writeBytes("Location: " + path);
         end();
     }
 
