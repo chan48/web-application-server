@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 import util.HttpRequestUtils;
 import util.IOUtils;
 
+import javax.print.DocFlavor;
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,6 +21,7 @@ public class Request {
     private Map<String, String> querystring;
     private Map<String, String> body;
     private int contentLength;
+    private Map<String, String> cookies;
 
     public Request(BufferedReader br) throws IOException {
         parse(br);
@@ -40,6 +43,9 @@ public class Request {
 
             if (line.contains("Content-Length")) {
                 contentLength = contentLength(line);
+            }
+            if (line.contains("Cookie")) {
+                cookies = HttpRequestUtils.parseCookies(line);
             }
 
             String [] tokens = line.split(" ");
@@ -99,5 +105,20 @@ public class Request {
 
     public int contentLength(String line) {
         return Integer.parseInt(line.split(" ")[1]);
+    }
+
+    public boolean isAuthenticated() {
+        if (cookies == null) return false;
+        String logined = cookies.get("logined");
+        if (logined == null) return false;
+        return logined.equals("true");
+    }
+
+    public Map<String, String> cookie(String line) {
+        String cookieValue = line.split(" ")[1];
+        String[] tokens = cookieValue.split("=");
+        Map<String, String> map = new HashMap<>();
+        map.put(tokens[0], tokens[1]);
+        return map;
     }
 }

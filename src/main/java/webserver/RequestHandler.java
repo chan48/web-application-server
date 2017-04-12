@@ -3,9 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.Map;
 
+import db.DataBase;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +42,37 @@ public class RequestHandler extends Thread {
 
                     User user = new User(body.get("userId"), body.get("password"), body.get("name"),
                             URLDecoder.decode(body.get("email")));
+                    DataBase.addUser(user);
 
                     log.debug("user created: {}", user.toString());
 
                     res.status(302, "Redirect");
                     res.redirect("/index.html");
+                    break;
+                }
+                case "/user/login": {
+                    Map<String, String> body = req.body();
+                    User user = DataBase.findUserById(body.get("userId"));
+                    log.debug("user found: {}", user);
+                    if (user == null) {
+                        res.setCookie("logined=false; Path=/");
+                        res.status(302, "Redirect");
+                        res.redirect("/user/login_failed.html");
+                    } else {
+                        res.status(302, "Redirect");
+                        res.setCookie("logined=true; Path=/");
+                        res.redirect("/index.html");
+                    }
+                    break;
+                }
+                case "/user/list": {
+                    if (req.isAuthenticated()) {
+                        res.status(200, "OK");
+                        res.send("user list");
+                    } else {
+                        res.status(302, "Redirect");
+                        res.redirect("/user/login.html");
+                    }
                     break;
                 }
                 default: {

@@ -46,6 +46,10 @@ public class Response {
         end();
     }
 
+    public void setCookie(String text) throws IOException {
+        writeBytes("Set-Cookie: " + text);
+    }
+
     private void write(String text) throws IOException {
         write(text.getBytes());
     }
