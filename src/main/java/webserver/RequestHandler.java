@@ -36,7 +36,7 @@ public class RequestHandler extends Thread {
             switch (req.path()) {
                 case "/": {
                     res.status(200, "OK");
-                    res.send("Hello world");
+                    res.send("Hello world 2");
                     break;
                 }
                 case "/user/create": {
