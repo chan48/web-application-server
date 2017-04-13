@@ -32,6 +32,14 @@ public class Response {
         end();
     }
 
+    public void sendHtmlText(String text) throws IOException {
+        writeBytes("Content-Type: text/html;charset=utf-8");
+        writeBytes("Content-Length: " + text.getBytes().length);
+        writeBytes("");
+        write(text);
+        end();
+    }
+
     public void sendFile(String path) throws IOException {
         byte[] fileBytes = Files.readAllBytes(new File("./webapp" + path).toPath());
         writeBytes("Content-Type: " + contentType(path) + ";charset=utf-8");

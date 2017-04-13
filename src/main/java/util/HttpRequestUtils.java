@@ -23,6 +23,7 @@ public class HttpRequestUtils {
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
+        cookies = cookies.split(":")[1];
         return parseValues(cookies, ";");
     }
 
@@ -33,7 +34,7 @@ public class HttpRequestUtils {
 
         String[] tokens = values.split(separator);
         return Arrays.stream(tokens).map(t -> getKeyValue(t, "=")).filter(p -> p != null)
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                .collect(Collectors.toMap(p -> p.getKey().trim(), p -> p.getValue().trim()));
     }
 
     static Pair getKeyValue(String keyValue, String regex) {

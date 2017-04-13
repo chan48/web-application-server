@@ -3,7 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 import java.net.URLDecoder;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import db.DataBase;
 import model.User;
@@ -67,8 +69,26 @@ public class RequestHandler extends Thread {
                 }
                 case "/user/list": {
                     if (req.isAuthenticated()) {
+                        Collection<User> users = DataBase.findAll();
+                        StringBuilder result = new StringBuilder();
+                        result.append("<!DOCTYPE html>");
+                        result.append("<html>");
+                        result.append("<body>");
+                        result.append("<table>");
+                        result.append("<tr><th>userId</th><th>Name</th><th>Email</th>");
+                        for (User user : users) {
+                            result.append("<tr>");
+                            result.append("<td>" + user.getUserId() + "</td>");
+                            result.append("<td>" + user.getName() + "</td>");
+                            result.append("<td>" + user.getEmail() + "</td>");
+                        }
+                        result.append("</table>");
+                        result.append("</body>");
+                        result.append("</html>");
+                        result.append("</ul>");
+
                         res.status(200, "OK");
-                        res.send("user list");
+                        res.sendHtmlText(result.toString());
                     } else {
                         res.status(302, "Redirect");
                         res.redirect("/user/login.html");
