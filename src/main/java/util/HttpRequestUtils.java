@@ -23,8 +23,12 @@ public class HttpRequestUtils {
      * @return
      */
     public static Map<String, String> parseCookies(String cookies) {
-        cookies = cookies.split(":")[1];
-        return parseValues(cookies, ";");
+        String[] tokens = cookies.split(":");
+        if (tokens.length  > 1) {
+            return parseValues(tokens[1], ";");
+        } else {
+            return null;
+        }
     }
 
     private static Map<String, String> parseValues(String values, String separator) {
